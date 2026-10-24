@@ -1,0 +1,100 @@
+{
+  "tier": "verified",
+  "event": "death",
+  "steps": [
+    {
+      "order": 1,
+      "id": "hospital-death-certificate",
+      "title": "Obtain the medical certificate of death",
+      "explanation": "Ask the hospital, attending doctor, or medical examiner for the medical certificate of cause of death. This is the first official record of the death and is required before civil registration.",
+      "why_now": "Every later certificate, funeral authorization, and claim depends on this medical record being issued first.",
+      "documents": [
+        "Photo ID of the informant",
+        "Hospital admission or discharge papers",
+        "Aadhaar or other ID of the deceased (if available)"
+      ],
+      "where": "Hospital records desk, attending physician, or local medical examiner",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": [],
+      "source_url": "https://www.cdc.gov/nchs/nvss/death.htm",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 2,
+      "id": "register-death",
+      "title": "Register the death with the local civil authority",
+      "explanation": "Take the medical certificate to the municipal corporation, registrar of births and deaths, or equivalent local office so the death is entered in the civil register.",
+      "why_now": "Civil registration is what makes the death legally recorded and unlocks the official death certificate.",
+      "documents": [
+        "Medical certificate of death",
+        "Photo ID of the informant",
+        "Proof of address of the deceased",
+        "Relationship proof (if required by the registrar)"
+      ],
+      "where": "Municipal corporation / registrar of births and deaths covering the place of death",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": ["hospital-death-certificate"],
+      "source_url": "https://crsorgi.gov.in/",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 3,
+      "id": "official-death-certificate",
+      "title": "Apply for the official death certificate",
+      "explanation": "After registration, apply for certified copies of the death certificate. Banks, insurers, and courts will usually only accept this official copy, not the hospital form alone.",
+      "why_now": "You will need multiple certified copies for financial, insurance, and legal steps that follow.",
+      "documents": [
+        "Death registration acknowledgement or number",
+        "Medical certificate of death",
+        "Photo ID of the applicant",
+        "Application form from the registrar"
+      ],
+      "where": "Same registrar office or the state/national civil registration portal",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": ["register-death"],
+      "source_url": "https://crsorgi.gov.in/",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 4,
+      "id": "notify-banks",
+      "title": "Notify banks and freeze or transfer accounts",
+      "explanation": "Inform every bank and credit union where the deceased held accounts. Provide the official death certificate so accounts can be frozen, nominees paid, or funds moved into an estate account.",
+      "why_now": "Early notice reduces unauthorized withdrawals and starts nominee or estate processing while other claims are prepared.",
+      "documents": [
+        "Official death certificate",
+        "Passbooks or account numbers",
+        "Nominee or legal-heir ID",
+        "Bank nomination form or succession papers (if requested)"
+      ],
+      "where": "Branch of each bank, or the bank's deceased-claim desk / app",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": ["official-death-certificate"],
+      "source_url": "https://www.rbi.org.in/",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 5,
+      "id": "legal-heir-certificate",
+      "title": "Apply for a legal heir or succession certificate",
+      "explanation": "Apply to the local revenue office or civil court for a legal heir certificate (or succession certificate where assets require it). This identifies who may claim remaining property, investments, and unpaid dues.",
+      "why_now": "After the death is certified, remaining assets and government claims typically cannot be settled without heirship proof.",
+      "documents": [
+        "Official death certificate",
+        "ID and address proof of all legal heirs",
+        "Family tree or relationship affidavits",
+        "List of assets to be claimed"
+      ],
+      "where": "Tahsildar / revenue office for a legal heir certificate, or district civil court for a succession certificate",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": ["official-death-certificate"],
+      "source_url": "https://services.india.gov.in/",
+      "last_verified": "2026-10-24"
+    }
+  ]
+}
