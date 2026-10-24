@@ -1,0 +1,14 @@
+{
+  "death": [],
+  "lost_documents": [
+    {
+      "key": "lost_item",
+      "label": "Which specific documents did you lose?",
+      "type": "multi",
+      "options": [
+        { "value": "pan_card", "label": "PAN Card" },
+        { "value": "driving_licence", "label": "Driving Licence" }
+      ]
+    }
+  ]
+}
