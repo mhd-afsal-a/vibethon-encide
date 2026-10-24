@@ -1,0 +1,64 @@
+{
+  "tier": "verified",
+  "event": "death",
+  "steps": [
+    {
+      "order": 1,
+      "id": "death_step_1_mccd",
+      "title": "Obtain Medical Certificate of Cause of Death (MCCD)",
+      "explanation": "Procure Form 4 (for institutional deaths) or Form 4A (for domiciliary/home deaths) from the attending doctor or medical institution.",
+      "why_now": "The Registrar requires a formalized medical cause of death to officially record the event in the Civil Registration System.",
+      "documents": [
+        "Hospital records or Doctor's notes"
+      ],
+      "where": "Attending Hospital or Registered Medical Practitioner",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": [],
+      "source_url": "https://ernakulam.nic.in/en/service/get-death-certificate/",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 2,
+      "id": "death_step_2_register",
+      "title": "Register Death with Local Registrar",
+      "explanation": "Submit the application for death registration to the concerned Panchayat, Municipality, or Corporation within 21 days of the occurrence to avoid late fees.",
+      "why_now": "Legally required under the Registration of Births & Deaths Act, 1969. It is the prerequisite for generating a valid Death Certificate.",
+      "documents": [
+        "Proof of birth of deceased (Birth certificate/SSLC)",
+        "Affidavit specifying date and time of death",
+        "Copy of Ration Card",
+        "Application Form",
+        "MCCD (Form 4 or Form 4A)"
+      ],
+      "where": "Local Self Government Department (Registrar Office)",
+      "time": "to be verified",
+      "fee": "Nil if within 21 days; Rs. 2 to Rs. 10 for delayed registration",
+      "depends_on": [
+        "death_step_1_mccd"
+      ],
+      "source_url": "https://cr.lsgkerala.gov.in/",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 3,
+      "id": "death_step_3_certificate",
+      "title": "Download Official Death Certificate",
+      "explanation": "Once registered, use the citizen portal (Sevana/K-SMART) to search and download the digitally signed Death Certificate.",
+      "why_now": "Provides legal proof needed to settle insurance, bank accounts, and property inheritance.",
+      "documents": [
+        "Deceased's Name",
+        "Date of Death",
+        "Registration Number (if available)"
+      ],
+      "where": "K-SMART Portal (Local Self Government Department, Kerala)",
+      "time": "Instant upon online availability",
+      "fee": "Rs. 5 per extract (or to be verified)",
+      "depends_on": [
+        "death_step_2_register"
+      ],
+      "source_url": "https://ksmart.lsgkerala.gov.in/ui/cr/public/quick-certificate-death",
+      "last_verified": "2026-10-24"
+    }
+  ]
+}

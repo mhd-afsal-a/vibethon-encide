@@ -1,0 +1,62 @@
+{
+  "tier": "verified",
+  "event": "lost_documents",
+  "steps": [
+    {
+      "order": 1,
+      "id": "lost_step_1_aadhaar",
+      "title": "Retrieve and Reprint Aadhaar Card",
+      "explanation": "Use the UIDAI portal to retrieve a lost Aadhaar number (UID) via OTP sent to the registered mobile/email, then order a PVC card reprint or download an e-Aadhaar.",
+      "why_now": "Aadhaar authentication via OTP is often required as identity proof to reissue other lost documents like PAN and Driving Licence.",
+      "documents": [
+        "Registered Mobile Number or Email ID"
+      ],
+      "where": "UIDAI Official Portal",
+      "time": "Immediate for e-Aadhaar; up to 15 days for PVC delivery",
+      "fee": "Rs. 50 (for PVC card reprint)",
+      "depends_on": [],
+      "source_url": "https://resident.uidai.gov.in/lost-uideid",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 2,
+      "id": "lost_step_2_pan",
+      "title": "Apply for Duplicate PAN Card",
+      "explanation": "Submit a request for a PAN card reprint online. The PAN number remains the same, but a new physical card is dispatched.",
+      "why_now": "Required to restore your financial identity and prevent potential misuse. Necessary for banking and tax compliance.",
+      "documents": [
+        "PAN Number",
+        "Aadhaar Number",
+        "Date of Birth"
+      ],
+      "where": "Income Tax Department portal / UTIITSL / NSDL",
+      "time": "to be verified",
+      "fee": "Rs. 50 (delivery within India)",
+      "depends_on": [
+        "lost_step_1_aadhaar"
+      ],
+      "source_url": "https://incometaxindia.gov.in/Pages/tax-services/apply-for-pan.aspx",
+      "last_verified": "2026-10-24"
+    },
+    {
+      "order": 3,
+      "id": "lost_step_3_dl",
+      "title": "Apply for Duplicate Driving Licence",
+      "explanation": "Log into the Sarathi Parivahan portal, select your state (Kerala), and submit an application for a duplicate DL using your original licence details and an FIR.",
+      "why_now": "Mandatory legal requirement to continue driving legally. Missing licences carry a risk of identity theft.",
+      "documents": [
+        "Driving Licence Number",
+        "Police FIR / Written Declaration (as required)",
+        "Address Proof (Aadhaar)"
+      ],
+      "where": "Ministry of Road Transport and Highways (Sarathi Parivahan)",
+      "time": "to be verified",
+      "fee": "to be verified",
+      "depends_on": [
+        "lost_step_1_aadhaar"
+      ],
+      "source_url": "https://sarathi.parivahan.gov.in/",
+      "last_verified": "2026-10-24"
+    }
+  ]
+}
