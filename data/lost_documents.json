@@ -36,7 +36,10 @@
         "lost_step_1_aadhaar"
       ],
       "source_url": "https://incometaxindia.gov.in/Pages/tax-services/apply-for-pan.aspx",
-      "last_verified": "2026-10-24"
+      "last_verified": "2026-10-24",
+      "applies_if": {
+        "lost_item": "pan_card"
+      }
     },
     {
       "order": 3,
@@ -56,7 +59,10 @@
         "lost_step_1_aadhaar"
       ],
       "source_url": "https://sarathi.parivahan.gov.in/",
-      "last_verified": "2026-10-24"
+      "last_verified": "2026-10-24",
+      "applies_if": {
+        "lost_item": "driving_licence"
+      }
     }
   ]
 }
