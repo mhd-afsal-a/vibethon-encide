@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { StepFlowchart } from './step-flowchart'
 import { StepDetailSheet } from './step-detail-sheet'
+import { StatusPanel } from './status-panel'
 import { fetchPlan } from '@/lib/waypoint/api'
 import { getLifeEvent } from '@/lib/waypoint/data'
 import type { Answers, EventId, Step } from '@/lib/waypoint/types'
@@ -35,7 +36,7 @@ export function Results({ event, answers, onEditAnswers, onStartOver }: ResultsP
         icon={<AlertCircle className="size-6" aria-hidden="true" />}
         tone="error"
         title="We couldn't load your steps"
-        message="Something went wrong on our side. Your answers are saved — please try again."
+        message={`${error.message} Your answers are saved.`}
       >
         <Button size="lg" className="h-11 px-5" onClick={() => mutate()} disabled={isValidating}>
           <RotateCw data-icon="inline-start" aria-hidden="true" />
@@ -55,10 +56,27 @@ export function Results({ event, answers, onEditAnswers, onStartOver }: ResultsP
       <StatusPanel
         icon={<Compass className="size-6" aria-hidden="true" />}
         title="Not supported yet"
-        message={`We don't have verified guidance for “${lifeEvent?.title.toLowerCase()}” yet. We add new situations only once every step has been checked with the offices involved.`}
+        message={`We don't have verified guidance for “${lifeEvent?.title.toLowerCase() ?? event}” yet. We add new situations only once every step has been checked with the offices involved.`}
       >
         <Button size="lg" className="h-11 px-5" onClick={onStartOver}>
           Choose another situation
+        </Button>
+      </StatusPanel>
+    )
+  }
+
+  if (data.steps.length === 0) {
+    return (
+      <StatusPanel
+        icon={<Compass className="size-6" aria-hidden="true" />}
+        title="No steps for these answers"
+        message="Based on what you told us, there's nothing you need to do right now. Try changing your answers if that doesn't look right."
+      >
+        <Button size="lg" className="h-11 px-5" onClick={onEditAnswers}>
+          Edit answers
+        </Button>
+        <Button variant="ghost" size="lg" className="h-11 px-5" onClick={onStartOver}>
+          Start over
         </Button>
       </StatusPanel>
     )
@@ -85,7 +103,7 @@ export function Results({ event, answers, onEditAnswers, onStartOver }: ResultsP
           Your next steps
         </h1>
         <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
-          {data.steps.length} steps, in the order they need to happen. Select a step to see what to
+          {data.steps.length} {data.steps.length === 1 ? 'step' : 'steps'}, in the order they need to happen. Select a step to see what to
           bring, where to go, and what it costs.
         </p>
       </div>
@@ -126,40 +144,6 @@ function LoadingState() {
         <Skeleton className="h-20 w-full max-w-xs rounded-2xl" />
         <Skeleton className="h-20 w-full max-w-xs rounded-2xl" />
       </div>
-    </section>
-  )
-}
-
-function StatusPanel({
-  icon,
-  title,
-  message,
-  tone = 'neutral',
-  children,
-}: {
-  icon: React.ReactNode
-  title: string
-  message: string
-  tone?: 'neutral' | 'error'
-  children: React.ReactNode
-}) {
-  return (
-    <section
-      role={tone === 'error' ? 'alert' : undefined}
-      className="mx-auto flex max-w-md flex-col items-center py-10 text-center"
-    >
-      <span
-        className={
-          tone === 'error'
-            ? 'flex size-14 items-center justify-center rounded-2xl bg-destructive/10 text-destructive'
-            : 'flex size-14 items-center justify-center rounded-2xl bg-accent text-accent-foreground'
-        }
-      >
-        {icon}
-      </span>
-      <h1 className="mt-6 font-serif text-3xl font-medium text-balance">{title}</h1>
-      <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">{message}</p>
-      <div className="mt-8 flex flex-col items-center gap-2 sm:flex-row">{children}</div>
     </section>
   )
 }

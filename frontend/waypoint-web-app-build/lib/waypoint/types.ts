@@ -16,7 +16,7 @@ export type Step = {
 }
 
 export type Plan = {
-  tier: 'supported' | 'unsupported'
+  tier: 'verified' | 'unsupported'
   event: EventId
   steps: Step[]
 }
@@ -27,16 +27,16 @@ export type QuestionOption = {
 }
 
 export type Question = {
-  id: string
-  prompt: string
+  key: string
+  label: string
+  type: 'single' | 'multi'
   options: QuestionOption[]
 }
 
-export type Answers = Record<string, string>
+export type Answers = Record<string, string | string[]>
 
 export type LifeEvent = {
   id: EventId
   title: string
   description: string
-  questions: Question[]
 }

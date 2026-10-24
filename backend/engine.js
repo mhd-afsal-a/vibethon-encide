@@ -1,5 +1,7 @@
 const fs = require("fs");
 const path = require("path");
+const { askJson } = require("./llm");
+const { EXPLAIN_PROMPT, INTAKE_PROMPT } = require("./prompts");
 
 const DATA_DIR = path.join(__dirname, "..", "data");
 
@@ -87,9 +89,111 @@ function buildRoadmap(event, answers = {}) {
   }));
 }
 
+const MAX_EXPLANATION_CHARS = 300;
+// Any digit (any script), any currency symbol, or a written-out rupee marker.
+const FORBIDDEN_IN_EXPLANATION = /\p{Nd}|\p{Sc}|\bRs\b|\bINR\b|\brupees?\b/iu;
+
+function isValidExplanation(text) {
+  return (
+    typeof text === "string" &&
+    text.trim().length > 0 &&
+    text.trim().length <= MAX_EXPLANATION_CHARS &&
+    !FORBIDDEN_IN_EXPLANATION.test(text)
+  );
+}
+
+// Map returned explanations onto the selected steps; anything missing or invalid falls back to why_now.
+function mergeExplanations(steps, reply) {
+  if (!reply || !Array.isArray(reply.explanations)) {
+    throw new Error("LLM reply is missing the explanations list.");
+  }
+
+  const selectedIds = new Set(steps.map((step) => step.id));
+  const byId = new Map();
+  for (const entry of reply.explanations) {
+    if (!entry || !selectedIds.has(entry.id) || byId.has(entry.id)) continue;
+    byId.set(entry.id, entry.text);
+  }
+
+  return steps.map((step) => {
+    const text = byId.get(step.id);
+    return { ...step, explanation: isValidExplanation(text) ? text.trim() : step.why_now };
+  });
+}
+
+async function explainRoadmap(answers, steps, ask = askJson) {
+  if (steps.length === 0) return { ai_status: "ok", steps };
+
+  const userData = {
+    answers,
+    steps: steps.map(({ id, title, why_now }) => ({ id, title, why_now })),
+  };
+
+  try {
+    const reply = await ask(EXPLAIN_PROMPT, userData);
+    return { ai_status: "ok", steps: mergeExplanations(steps, reply) };
+  } catch (error) {
+    console.warn(`AI explanations unavailable, using why_now: ${error.message}`);
+    return { ai_status: "fallback", steps };
+  }
+}
+
+const INTAKE_MIN_CONFIDENCE = 0.7;
+
+// Keep only answers that name a real question and an allowed option; multi answers become arrays.
+function sanitizeAnswers(questions, raw) {
+  const answers = {};
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return answers;
+
+  for (const question of questions) {
+    const allowed = new Set((question.options || []).map((option) => option.value));
+    const value = raw[question.key];
+    if (question.type === "multi") {
+      const list = (Array.isArray(value) ? value : [value]).filter((item) => allowed.has(item));
+      if (list.length > 0) answers[question.key] = [...new Set(list)];
+    } else if (typeof value === "string" && allowed.has(value)) {
+      answers[question.key] = value;
+    }
+  }
+  return answers;
+}
+
+async function classifyIntake(prompt, questionsByEvent, supportedEvents, ask = askJson) {
+  const events = supportedEvents.map((id) => ({
+    id,
+    questions: (questionsByEvent[id] || []).map(({ key, label, type, options }) => ({
+      key,
+      label,
+      type: type === "multi" ? "multi" : "single",
+      options: (options || []).map(({ value, label: optionLabel }) => ({ value, label: optionLabel })),
+    })),
+  }));
+
+  try {
+    const reply = await ask(INTAKE_PROMPT, { message: prompt, events });
+    const event = reply && reply.event;
+    const confidence = Number(reply && reply.confidence);
+    if (!supportedEvents.includes(event) || !(confidence >= INTAKE_MIN_CONFIDENCE)) {
+      return { event: null, answers: {}, ai_status: "ok" };
+    }
+    return {
+      event,
+      answers: sanitizeAnswers(questionsByEvent[event] || [], reply.answers),
+      ai_status: "ok",
+    };
+  } catch (error) {
+    console.warn(`AI intake unavailable: ${error.message}`);
+    return { event: null, answers: {}, ai_status: "fallback" };
+  }
+}
+
 module.exports = {
   loadPack,
   selectSteps,
   orderSteps,
   buildRoadmap,
+  explainRoadmap,
+  mergeExplanations,
+  sanitizeAnswers,
+  classifyIntake,
 };

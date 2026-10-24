@@ -5,8 +5,11 @@ import { Signpost } from 'lucide-react'
 import { EventPicker } from './event-picker'
 import { Questionnaire } from './questionnaire'
 import { Results } from './results'
+import { preload } from 'swr'
+import { fetchQuestions } from '@/lib/waypoint/api'
+import { isComplete } from '@/lib/waypoint/answers'
 import { getLifeEvent } from '@/lib/waypoint/data'
-import type { Answers, EventId } from '@/lib/waypoint/types'
+import type { Answers, EventId, Question } from '@/lib/waypoint/types'
 
 type Screen =
   | { name: 'select' }
@@ -21,6 +24,21 @@ export function WaypointApp() {
 
   function startOver() {
     setScreen({ name: 'select' })
+  }
+
+  // Skip the questions when the description already answered all of them.
+  async function handleIntake(event: EventId, answers: Answers) {
+    let questions: Question[] | null = null
+    try {
+      questions = await preload(['questions', event] as const, fetchQuestions)
+    } catch {
+      // The questions screen will show its own error and retry.
+    }
+    if (questions && isComplete(questions, answers)) {
+      setScreen({ name: 'results', event, answers })
+    } else {
+      setScreen({ name: 'questions', event, answers })
+    }
   }
 
   return (
@@ -59,7 +77,10 @@ export function WaypointApp() {
 
       <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-10 md:py-14">
         {screen.name === 'select' && (
-          <EventPicker onSelect={(event) => setScreen({ name: 'questions', event })} />
+          <EventPicker
+            onSelect={(event) => setScreen({ name: 'questions', event })}
+            onIntake={handleIntake}
+          />
         )}
 
         {screen.name === 'questions' && (

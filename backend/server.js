@@ -4,7 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const express = require("express");
 const cors = require("cors");
-const { buildRoadmap } = require("./engine");
+const { buildRoadmap, explainRoadmap, classifyIntake } = require("./engine");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -94,7 +94,7 @@ app.get("/questions/:event", (req, res) => {
   res.json(all[event]);
 });
 
-app.post("/roadmap", (req, res) => {
+app.post("/roadmap", async (req, res) => {
   const { event, answers } = req.body || {};
 
   if (!SUPPORTED_EVENTS.has(event)) {
@@ -106,13 +106,35 @@ app.post("/roadmap", (req, res) => {
     return res.status(400).json({ error: validation.message });
   }
 
-  const steps = buildRoadmap(event, answers || {});
+  // validateAnswers has already rejected unknown keys and invalid choices.
+  const validAnswers = answers || {};
+  const ordered = buildRoadmap(event, validAnswers);
+  const { ai_status, steps } = await explainRoadmap(validAnswers, ordered);
   res.json({
     tier: "verified",
     event,
-    ai_status: "not_used",
+    ai_status,
     steps,
   });
+});
+
+const MAX_INTAKE_CHARS = 1000;
+
+app.post("/intake", async (req, res) => {
+  const { prompt } = req.body || {};
+  const text = typeof prompt === "string" ? prompt.trim() : "";
+
+  if (!text) {
+    return res.status(400).json({ error: "Please describe your situation in a few words." });
+  }
+  if (text.length > MAX_INTAKE_CHARS) {
+    return res
+      .status(400)
+      .json({ error: `Please keep your description under ${MAX_INTAKE_CHARS} characters.` });
+  }
+
+  const result = await classifyIntake(text, loadQuestions(), [...SUPPORTED_EVENTS]);
+  res.json(result);
 });
 
 app.listen(PORT, () => {
